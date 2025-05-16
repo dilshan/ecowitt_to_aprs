@@ -1,0 +1,3 @@
+[submodule "bridge/src/mongoose"]
+	path = bridge/src/mongoose
+	url = https://github.com/cesanta/mongoose.git
