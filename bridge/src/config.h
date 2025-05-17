@@ -8,8 +8,6 @@ extern char APRS_LONGITUDE[32];
 extern char APRS_DESTINATION[48];
 extern char APRS_SERVER_HOST[100];
 extern int APRS_SERVER_PORT;
-extern char APRS_SOFTWARE_NAME[64];
-extern char APRS_SOFTWARE_VERSION[20];
 
 void load_config(const char *filename);
 
