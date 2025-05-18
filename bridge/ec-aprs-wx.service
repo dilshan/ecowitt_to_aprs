@@ -1,0 +1,11 @@
+Description=Ecowitt to APRS WX Service
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/ec-aprs-wx
+Restart=on-failure
+User=nobody
+Environment=CONFIG=/etc/ec-aprs-wx.cfg
+
+[Install]
+WantedBy=multi-user.target

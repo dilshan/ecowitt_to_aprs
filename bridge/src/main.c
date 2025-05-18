@@ -351,8 +351,11 @@ int main(void) {
   char addr[64];
   const char *port = "1234";
 
+  const char *config_path = getenv("CONFIG");
+  if (!config_path) config_path = "default.cfg";
+
   mg_mgr_init(&mgr);
-  load_config("config.cfg");
+  load_config(config_path);
 
   printf("Starting Ecowitt to APRS Gateway on port %s\n", port);
   printf("APRS Callsign: %s, Lat: %s, Lon: %s\n", APRS_CALLSIGN_SSID,
