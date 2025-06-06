@@ -1,28 +1,84 @@
-name: Build Ecowitt2APRS
+name: Build & Release Cross-Platform Binaries
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*'  # e.g., v1.0.0
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          - x64
+          - armv7
+          - arm64
 
     steps:
-    - name: Checkout repository with submodules
+    - name: Checkout repository
       uses: actions/checkout@v4
       with:
         submodules: recursive
 
-    - name: Install build dependencies
-      run: sudo apt-get update && sudo apt-get install -y build-essential
+    - name: Set up QEMU for cross-arch builds
+      uses: docker/setup-qemu-action@v3
 
-    - name: Build the project
-      working-directory: bridge
-      run: make
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-    - name: Show resulting binary info
-      working-directory: bridge
-      run: file bin/ec-aprs-wx && ls -lh bin/ec-aprs-wx
+    - name: Cross-compile and package
+      run: |
+        mkdir -p dist/${{ matrix.target }}
+
+        case "${{ matrix.target }}" in
+          x64)
+            image=dockcross/linux-x64
+            suffix=linux-x64
+            ;;
+          armv7)
+            image=dockcross/linux-armv7
+            suffix=linux-armv7
+            ;;
+          arm64)
+            image=dockcross/linux-arm64
+            suffix=linux-arm64
+            ;;
+        esac
+
+        docker run --rm -v ${{ github.workspace }}:/work -w /work/bridge $image \
+          bash -c "make clean && make"
+
+        cp bridge/bin/ec-aprs-wx dist/${{ matrix.target }}/
+        cp bridge/bin/config.cfg dist/${{ matrix.target }}/
+        cp bridge/ec-aprs-wx.service dist/${{ matrix.target }}/
+
+        tarball="ec-aprs-wx-${suffix}.tar.gz"
+        tar -czvf "$tarball" -C dist/${{ matrix.target }} .
+
+        sha256sum "$tarball" > "$tarball.sha256"
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ec-aprs-wx-${{ matrix.target }}
+        path: |
+          ec-aprs-wx-*.tar.gz
+          ec-aprs-wx-*.tar.gz.sha256
+        if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download all built artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+
+    - name: Publish release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: artifacts/**/*.tar.gz*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
