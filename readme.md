@@ -66,6 +66,21 @@ sudo systemctl start ec-aprs-wx
 sudo systemctl enable ec-aprs-wx
 ```
 
+## Configuration for the Ecowitt Hub
+
+To send data to *Ecowitt2APRS*, follow these configuration steps on the Ecowitt hub:
+
+* Enable the customized weather service.
+* Set the protocol type to `Ecowitt`.
+* For the Server IP, specify the IP address of the PC or SBC hosting the *Ecowitt2APRS* service.
+* Set the Path to: `\`.
+* Use Port: `1234`.
+* Set the upload interval to `60` seconds, or another preferred value supported by your Ecowitt hub.
+
+Make sure to save your changes after updating the settings.
+
+![Ecowitt configuration](resources/ecowitt-config.png)
+
 ## Clean
 
 To remove all build artifacts:
