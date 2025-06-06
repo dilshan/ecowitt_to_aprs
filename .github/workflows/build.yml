@@ -1,0 +1,26 @@
+name: Build Ecowitt2APRS
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository with submodules
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install build dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential
+
+    - name: Build the project
+      run: make
+
+    - name: Show resulting binary info
+      run: file bin/ec-aprs-wx && ls -lh bin/ec-aprs-wx
