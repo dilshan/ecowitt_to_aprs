@@ -1,6 +1,6 @@
 # Ecowitt2APRS
 
-**Ecowitt2APRS** is a lightweight Linux service that bridges weather data from Ecowitt-compatible weather stations to the APRS-IS network in the form of APRS weather packets. It is written in C and uses [Mongoose](https://github.com/cesanta/mongoose) for embedded networking.
+**Ecowitt2APRS** is a lightweight Linux service that connects weather data from Ecowitt compatible weather stations to the APRS-IS network, transmitting the data in the form of APRS weather packets. It is written in C and is designed to run on minimal Linux systems, such as low-power SBCs.
 
 ## Features
 
@@ -45,6 +45,15 @@ This will:
 * Copy the configuration file to `/etc/ec-aprs-wx.cfg`
 * Install and enable a `systemd` service at `/etc/systemd/system/ec-aprs-wx.service`
 
+## Configuration
+
+Edit `/etc/ec-aprs-wx.cfg` to set:
+
+* `APRS_CALLSIGN_SSID`: APRS callsign (e.g., `4S6DRJ`).
+* `APRS_PASSCODE`: APRS-IS passcode. To generate the passcode, [use this service](https://apps.magicbug.co.uk/passcode/).
+* `APRS_LATITUDE`: Latitude in APRS format (e.g., `4903.50N`).
+* `APRS_LONGITUDE`: Longitude in APRS format (e.g., `07201.75W`).
+
 ### Starting the service
 
 ```bash
@@ -56,15 +65,6 @@ sudo systemctl start ec-aprs-wx
 ```bash
 sudo systemctl enable ec-aprs-wx
 ```
-
-## Configuration
-
-Edit `/etc/ec-aprs-wx.cfg` to set:
-
-* `APRS_CALLSIGN_SSID`: APRS callsign (e.g., `4S6DRJ`).
-* `APRS_PASSCODE`: APRS-IS passcode. To generate the passcode, [use this service](https://apps.magicbug.co.uk/passcode/).
-* `APRS_LATITUDE`: Latitude in APRS format (e.g., `4903.50N`).
-* `APRS_LONGITUDE`: Longitude in APRS format (e.g., `07201.75W`).
 
 ## Clean
 
