@@ -20,7 +20,9 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y build-essential
 
     - name: Build the project
+      working-directory: bridge
       run: make
 
     - name: Show resulting binary info
+      working-directory: bridge
       run: file bin/ec-aprs-wx && ls -lh bin/ec-aprs-wx
